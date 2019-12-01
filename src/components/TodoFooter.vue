@@ -7,12 +7,13 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: "TodoFooter",
   methods: {
-    clearTodo () {
-      localStorage.clear()
-    }
+    ...mapMutations({
+      clearTodo: 'clearAll'
+    })
   }
 }
 </script>

@@ -1,12 +1,16 @@
 <template>
   <header>
-    <h1>TODO it!</h1>
+    <h1>{{ this.getHeaderText }}</h1>
   </header>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-    name: "TodoHeader"
+  name: "TodoHeader",
+  computed : {
+    ...mapGetters(['getHeaderText'])
+  }
 }
 </script>
 

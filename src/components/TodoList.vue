@@ -1,48 +1,32 @@
 <template>
   <div>
-    <ul>
-      <li v-for="(todoItem, index) in todoItems" :key="todoItem.item" class="shadow">
+    <transition-group name="list" tag="ul">
+      <li v-for="(todoItem, index) in this.getTodoItems" :key="todoItem.item" class="shadow">
         <i class="checkBtn fas fa-check" :class="{checkBtnCompleted: todoItem.completed}"
-           @click="toggleComplete(todoItem, index)"></i>
+           @click="toggleComplete({ todoItem, index })"></i>
         <span :class="{textCompleted: todoItem.completed}">
           {{ todoItem.item }}
         </span>
-        <span class="removeBtn" @click="removeTodo(todoItem, index)">
+        <span class="removeBtn" @click="removeTodo({ todoItem, index })">
           <i class="fas fa-trash-alt"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: "TodoList",
-  data () {
-    return {
-      todoItems: []
-    }
-  },
-  created () {
-    if (localStorage.length > 0) {
-      for (let i=0; i <localStorage.length; i++) {
-        if (localStorage.key(i) != "loglevel:webpack-dev-server" && localStorage.key(i) != '') {
-          this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))))
-        }
-      }
-    }
+  computed : {
+    ...mapGetters(['getTodoItems']),
   },
   methods : {
-    removeTodo (todoItem, index) {
-      localStorage.removeItem(todoItem)
-      this.todoItems.splice(index, 1)
-    },
-    toggleComplete (todoItem, index) {
-      todoItem.completed = !todoItem.completed
-
-      localStorage.removeItem(todoItem.item)
-      localStorage.setItem(todoItem.item, JSON.stringify(todoItem))
-    }
+    ...mapMutations({
+      removeTodo: 'removeOneItem',
+      toggleComplete: 'toggleOneItem'
+    }),
   }
 }
 </script>
@@ -79,5 +63,13 @@ export default {
   .removeBtn {
     margin-left: auto;
     color: #de4343;
+  }
+
+  .list-enter-active, .list-leave-active {
+    transition: all 1s;
+  }
+  .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+    opacity: 0;
+    transform: translateY(30px);
   }
 </style>
